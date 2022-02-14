@@ -5,8 +5,6 @@
     }
   ],
   "settings": {
-
-    "go.installDependenciesWhenBuilding":true,
     "editor.renderWhitespace": "trailing",
     "comments.openPanel": "neverOpen"
   }
