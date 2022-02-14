@@ -43,3 +43,4 @@ cplus-sandpiles
 
 *.txt
 *.nope
+!images/*.png
