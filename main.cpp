@@ -34,7 +34,8 @@ void PrintPPM()
     std::cerr << "  - " << bMinX << ":" << bMaxX << " " << bMinY << ":" << bMaxY << std::endl;
     std::cerr << "  - " << width << " " << height << std::endl;
     std::cout << "P6" << std::endl;
-    std::cout << width << " " << height << " " << "255" << std::endl;
+    std::cout << width << " " << height << " "
+              << "255" << std::endl;
 
     for (int y = bMinY; y < bMaxY; y++)
     {
@@ -65,7 +66,6 @@ void PrintPPM()
     // std::cout << std::endl;
 }
 // std::cout << std::endl;
-
 
 void PrintGrid()
 {
@@ -182,11 +182,13 @@ bool topple(void)
             }
         }
     }
-    for (int i = 0; i < grid_size; i++)
-    {
-        grid1[i] = grid2[i];
-    }
-    // memcpy(grid1,grid2,sizeof(uint8_t));
+    /*
+     for (int i = 0; i < grid_size; i++)
+     {
+         grid1[i] = grid2[i];
+     }
+     */
+    memcpy(grid1, grid2, sizeof(uint8_t) * grid_size);
     return bail;
 }
 
@@ -197,7 +199,7 @@ int main(int argc, char **argv)
     time_t start;
     time_t end;
 
-    int shift = atoi( argv[1] );
+    int shift = atoi(argv[1]);
     grains = 1 << shift;
 
     grid_X = 1000;
@@ -225,7 +227,7 @@ int main(int argc, char **argv)
         for (int x = 0; x < grid_X; x++)
         {
             int index = y * grid_X + x;
-            
+
             if (grid1[index] != 0)
             {
                 if (x < bMinX)
@@ -245,7 +247,6 @@ int main(int argc, char **argv)
                     bMaxY = y;
                 }
             }
-            
         }
     }
 
@@ -254,12 +255,10 @@ int main(int argc, char **argv)
     bMinX--;
     bMinY--;
 
-    //std::cout << bMinX << ":" << bMaxX << " " << bMinY << ":" << bMaxY << std::endl;
+    // std::cout << bMinX << ":" << bMaxX << " " << bMinY << ":" << bMaxY << std::endl;
 
-
-    
-    //for (uint64_t outerloop = 128; outerloop < grains; outerloop += 128)
-    while(1)
+    // for (uint64_t outerloop = 128; outerloop < grains; outerloop += 128)
+    while (1)
     {
 
         while (1)
@@ -273,27 +272,32 @@ int main(int argc, char **argv)
             // std::cout << bMinX << ":" << bMaxX << " " << bMinY << ":" << bMaxY << std::endl;
         }
         grains -= 128;
-        if( grains <= 0 ) { break; }
-        grid1[pos1] += 128;
-/*      
-        if (outerloop < grains)
+        if (grains <= 0)
         {
-            grid1[pos1] += 128;
+            break;
         }
-*/
+        grid1[pos1] += 128;
+        /*
+                if (outerloop < grains)
+                {
+                    grid1[pos1] += 128;
+                }
+        */
         // PrintGrid();
     }
 
     int st = 1 << shift;
-    std::cerr << "- 2^" << shift << std::endl << "  - " << st << " grains placed" << std::endl;
+    std::cerr << "- 2^" << shift << std::endl
+              << "  - " << st << " grains placed" << std::endl;
     end = time(NULL);
-    int v[3];
-    v[0] = (end-start) % 60;
-    float u = ((end-start) / 3600.0) * 60;
-    v[1] =  (int)u % 60;
-    v[2] = (end-start) / 3600;
-    std::cerr << "  - Time " << v[2] << "h " << v[1] << "m " << v[0] << "s" << std::endl; 
-    //PrintGrid();
+
+    int seconds, hours, minutes;
+    seconds = (end - start);
+    minutes = seconds / 60;
+    hours = minutes / 60;
+
+    std::cerr << "  - Time " << hours << "h " << minutes << "m " << seconds % 60 << "s" << std::endl;
+    // PrintGrid();
     PrintPPM();
 
     if (grid2 != NULL)
