@@ -6,6 +6,9 @@
   ],
   "settings": {
     "editor.renderWhitespace": "trailing",
-    "comments.openPanel": "neverOpen"
+    "comments.openPanel": "neverOpen",
+    "files.associations": {
+      "iostream": "cpp"
+    }
   }
 }

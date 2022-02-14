@@ -5,352 +5,206 @@
 #include <stdio.h>
 #include <math.h>
 #include <algorithm> // std::copy
-
-// structs
-struct Rec
-{
-    uint16_t MinX;
-    uint16_t MaxX;
-    uint16_t MinY;
-    uint16_t MaxY;
-} wrec;
+#include <string.h>
 
 // globals
-uint16_t grid_width;
-uint16_t grid_height;
-uint32_t grid_size;
-uint16_t grid_center_x;
-uint16_t grid_center_y;
+int bMinX;
+int bMinY;
+int bMaxX;
+int bMaxY;
+
+int grid_X;
+int grid_Y;
+int grid_size;
 
 uint8_t *grid1;
+uint8_t *grid2;
 
-void PrintStats(void);
-void PrintGrid(void);
-bool topple(void);
-
-int main(int argc, char **argv)
+void PrintGrid()
 {
-
-    // initialize globals
-    grid1 = NULL;
-    grid_width = 2000;
-    grid_height = 2000;
-    grid_center_x = grid_width / 2;
-    grid_center_y = grid_height / 2;
-    grid_size = grid_width * grid_height;
-
-    uint64_t grains = (1 << 10) - 1;
-
-    grid1 = new uint8_t[grid_size];
-    if (grid1 == NULL)
+    for (int y = bMinY; y <= bMaxY; y++)
     {
-        std::cerr << "could not allocate memory for grid1." << std::endl;
-        exit(1);
-    }
-
-    wrec.MinX = grid_width;
-    wrec.MaxX = 0;
-    wrec.MinY = grid_height;
-    wrec.MaxY = 0;
-
-    uint32_t cindex = grid_center_y * grid_width + grid_center_x;
-
-    grid1[cindex] = 1;
-
-    PrintStats();
-
-    // scan and get bounding box
-    for (uint16_t y = 0; y < grid_height; y++)
-    {
-        for (uint16_t x = 0; x < grid_height; x++)
+        for (int x = bMinX; x <= bMaxX; x++)
         {
-            uint32_t index = y * grid_width + x;
-            if (grid1[index] != 0 && x < wrec.MinX)
-            {
-                wrec.MinX = x;
-            }
-            if (grid1[index] != 0 && y < wrec.MinY)
-            {
-                wrec.MinY = y;
-            }
-            if (grid1[index] != 0 && x > wrec.MaxX)
-            {
-                wrec.MaxX = x;
-            }
-            if (grid1[index] != 0 && y > wrec.MaxY)
-            {
-                wrec.MaxY = y;
-            }
-        }
-    }
-
-    // Give a little wiggle room for the working bounding box.
-    wrec.MinX--;
-    wrec.MinY--;
-    wrec.MaxX++;
-    wrec.MaxY++;
-
-    PrintStats();
-
-    uint32_t frame = 0; // frame : the number of times, topple() has been run. Why frame... because...
-    uint8_t ty = 0;     // ty : used for the spinner.
-    
-    grid1[cindex]-=1;
-    
-    for (uint64_t outerloop = 0; outerloop < grains; outerloop += 128)
-    {
-        grid1[cindex] += 128;
-        while (1)
-        {
-            bool t = topple();
-            if (t)
-            {
-                break;
-            }
-
-            frame++;
-            if (frame % 100 == 0)
-            {
-                switch (ty)
-                {
-                case 0:
-                {
-                    std::cout << "|";
-                }
-                case 1:
-                {
-                    std::cout << "/";
-                }
-                case 2:
-                {
-                    std::cout << "-";
-                }
-                case 3:
-                {
-                    std::cout << "\\";
-                }
-                case 4:
-                {
-                    std::cout << "|";
-                }
-                case 5:
-                {
-                    std::cout << "/";
-                }
-                case 6:
-                {
-                    std::cout << "-";
-                }
-                case 7:
-                {
-                    std::cout << "\\";
-                }
-                }
-                std::cout << "\r";
-                ty++;
-                if (ty == 8)
-                {
-                    ty = 0;
-                }
-            }
-        }
-        
-    }
-
-    // make bounding box a little larger so there is padding for the image.
-    wrec.MinX -= 10;
-    wrec.MinY -= 10;
-    wrec.MaxX += 10;
-    wrec.MaxY += 10;
-
-    if (wrec.MinX < 0)
-    {
-        wrec.MinX = 0;
-    }
-    if (wrec.MinY < 0)
-    {
-        wrec.MinY = 0;
-    }
-    if (wrec.MaxX > grid_width)
-    {
-        wrec.MaxX = grid_width;
-    }
-    if (wrec.MaxY > grid_height)
-    {
-        wrec.MaxY = grid_height;
-    }
-
-    PrintStats();
-
-    // calculate the image width and height
-    uint16_t iwidth = wrec.MaxX - wrec.MinX;  // iwidth : The image's width
-    uint16_t iheight = wrec.MaxY - wrec.MinY; // iheight : The image's height
-
-    PrintGrid();
-
-    // clean up memory
-    if (grid1 != NULL)
-    {
-        delete[] grid1;
-    }
-}
-
-void PrintGrid(void)
-{
-    for (uint16_t y = wrec.MinY; y <= wrec.MaxY; y++)
-    {
-        for (uint16_t x = wrec.MinX; x <= wrec.MaxX; x++)
-        {
-            uint32_t tmpi = y * grid_width + x;
-            std::cout << (int)grid1[tmpi] << " ";
+            int index = y * grid_X + x;
+            std::cout << (int)grid1[index] << " ";
         }
         std::cout << std::endl;
     }
     std::cout << std::endl;
 }
 
-void PrintStats(void)
-{
-
-    std::cout << "grid width:height " << grid_width << ":" << grid_height << std::endl;
-    std::cout << "grid center width:height " << grid_center_x << ":" << grid_center_y << std::endl;
-    std::cout << "grid size " << grid_size << std::endl;
-    std::cout << "wrec " << wrec.MinX << ":" << wrec.MaxX << " " << wrec.MinY << ":" << wrec.MaxY << std::endl;
-    std::cout << std::endl;
-}
-
 bool topple(void)
 {
-
-    bool bail;
-    bail = true;
-
-    uint8_t *grid2 = new uint8_t[grid_size];
-    if (grid2 == NULL)
+    bool bail = true;
+    // anything less than 4 just get copied over
+    for (int y = bMinY; y <= bMaxY; y++)
     {
-        std::cerr << "Memory allocation error with grid2." << std::endl;
-    }
-
-    // copy cells that are less than 4
-    for (uint16_t y = wrec.MinY; y <= wrec.MaxY; y++)
-    {
-        for (uint16_t x = wrec.MinX; x <= wrec.MaxX; x++)
+        for (int x = bMinX; x <= bMaxX; x++)
         {
-            uint32_t index = y * grid_height + x;
-            uint8_t num;
-            num = grid1[index];
+            int index = y * grid_X + x;
+            uint8_t num = grid1[index];
             if (num < 4)
             {
                 grid2[index] = num;
             }
+            else
+            {
+                grid2[index] = 0;
+            }
         }
     }
 
-    Rec w;
-    w.MaxX = wrec.MaxX;
-    w.MinX = wrec.MinX;
-    w.MaxY = wrec.MaxY;
-    w.MinY = wrec.MinY;
+    int wMinX = bMinX;
+    int wMaxX = bMaxX;
+    int wMinY = bMinY;
+    int wMaxY = bMaxY;
 
-    if (wrec.MinX < 0)
+    for (int y = wMinY; y <= wMaxY; y++)
     {
-        wrec.MinX = 0;
-    }
-    if (wrec.MinY < 0)
-    {
-        wrec.MinY = 0;
-    }
-    if (wrec.MaxX > grid_width)
-    {
-        wrec.MaxX = grid_width;
-    }
-    if (wrec.MaxY > grid_height)
-    {
-        wrec.MaxY = grid_height;
-    }
-
-    for (uint16_t y = w.MinY; y <= w.MaxY; y++)
-    {
-        for (uint16_t x = w.MinX; x <= w.MaxX; x++)
+        for (int x = wMinX; x <= wMaxX; x++)
         {
-            uint32_t index = y * grid_height + x;
-            uint8_t tmp;
-            tmp = grid1[index];
+            int index = y * grid_X + x;
+            uint8_t num = grid1[index];
+            if(num<4){
+                continue;
+            }
+            
+            grid2[index] += (num - 4);
+            bail = false;
+            
+            // north
+            int ty = y - 1;
+            if( ty < 0 ) {
+                bMinY = 0;
+            }else{
+                if(ty<bMinY){ bMinY = ty; }
+                grid2[ty*grid_X+x] += 1;
+            }
 
-            if (tmp >= 4)
+            // south
+            ty = y + 1;
+            if( ty >= grid_Y ) {
+                bMinY = grid_Y-1;
+            }else{
+                if(ty>bMaxY){ bMaxY = ty; }
+                grid2[ty*grid_X+x] += 1;
+            }
+
+            // west
+            int tx = x - 1;
+            if( tx < 0 ) {
+                bMinX = 0;
+            }else{
+                if(tx<bMinX){bMinX = tx;}
+                grid2[y*grid_X+tx]+=1;
+            }
+
+            // east 
+            tx = x + 1;
+            if( tx >= grid_X){
+                bMaxX = grid_X-1;
+            }else{
+                if(tx>bMaxX){bMaxX = tx;}
+                grid2[y*grid_X+tx]+=1;
+            }
+        }
+    }
+    for(int i=0;i<grid_size;i++) { grid1[i] = grid2[i];}
+    //memcpy(grid1,grid2,sizeof(uint8_t));
+    return bail;
+}
+
+int main(int argc, char **argv)
+{
+
+    uint64_t grains;
+
+    grains = 65535;
+
+    grid_X = 1000;
+    grid_Y = 1000;
+    grid_size = grid_X * grid_Y;
+
+    grid1 = new uint8_t[grid_size];
+    grid2 = new uint8_t[grid_size];
+
+    bMinX = grid_X;
+    bMaxX = 0;
+    bMinY = grid_Y;
+    bMaxY = 0;
+
+    int ip1x = grid_X / 2;
+    int ip1y = grid_Y / 2;
+    int pos1 = ip1y * grid_X + ip1x;
+    grid1[pos1] = 1;
+
+    for (int y = 0; y < grid_Y; y++)
+    {
+        for (int x = 0; x < grid_X; x++)
+        {
+            int index = y * grid_X + x;
+            if (grid1[index] != 0)
             {
-                grid2[index] += (tmp - 4); // Nasty gotha here. Add then subtract!
-                if (grid2[index] >= 4)
+                if (x < bMinX)
                 {
-                    bail = false;
+                    bMinX = x;
                 }
-
-                // west
-                if (x - 1 >= 0)
+                if (x > bMaxX)
                 {
-                    uint16_t tx = x - 1;
-                    uint32_t tmpi = y * grid_width + tx;
-                    grid2[tmpi]++;
-                    if (tx < wrec.MinX)
-                    {
-                        wrec.MinX = tx; // modifiy the working bounding box because of a spill over.
-                    }
-                    if (grid2[tmpi] >= 4)
-                    {
-                        bail = false;
-                    }
+                    bMaxX = x;
                 }
-
-                // north
-                if (y - 1 >= 0)
+                if (y < bMinY)
                 {
-                    uint16_t ty = y - 1;
-                    uint32_t tmpi = ty * grid_width + x;
-                    grid2[tmpi]++;
-                    if (ty < wrec.MinY)
-                    {
-                        wrec.MinY = ty; // modifiy the working bounding box because of a spill over.
-                    }
-                    if (grid2[tmpi] >= 4)
-                    {
-                        bail = false;
-                    }
+                    bMinY = y;
                 }
-
-                // east
-                if (x + 1 <= grid_width - 1)
+                if (y > bMaxY)
                 {
-                    uint16_t tx = x + 1;
-                    uint32_t tmpi = y * grid_width + tx;
-                    grid2[tmpi]++;
-                    if (tx > wrec.MaxX)
-                    {
-                        wrec.MaxX = tx; // modifiy the working bounding box because of a spill over.
-                    }
-                    if (grid2[tmpi] >= 4)
-                    {
-                        bail = false;
-                    }
-                }
-
-                // south
-                if (y + 1 <= grid_height - 1)
-                {
-                    uint16_t ty = y + 1;
-                    uint32_t tmpi = ty * grid_width + x;
-                    grid2[tmpi]++;
-                    if (ty > wrec.MaxY)
-                    {
-                        wrec.MaxY = ty; // modifiy the working bounding box because of a spill over.
-                    }
-                    if (grid2[tmpi] >= 4)
-                    {
-                        bail = false;
-                    }
+                    bMaxY = y;
                 }
             }
         }
     }
-    std::copy(grid2, grid2 + grid_size, grid1);
-    return bail;
+
+    bMaxX++;
+    bMaxY++;
+    bMinX--;
+    bMinY--;
+
+    std::cout << bMinX << ":" << bMaxX << " " << bMinY << ":" << bMaxY << std::endl;
+
+    for (uint64_t outerloop = 0; outerloop < grains; outerloop += 128)
+    {
+
+        while (1)
+        {
+            bool t;
+            t = topple();
+            if (t == true )
+            {
+                break;
+            }
+            //std::cout << bMinX << ":" << bMaxX << " " << bMinY << ":" << bMaxY << std::endl;
+        }
+
+        if (outerloop < grains)
+        {
+            grid1[pos1] += 128;
+        }
+        //PrintGrid();
+    }
+
+    PrintGrid();
+
+
+    if (grid2 != NULL)
+    {
+        delete[] grid2;
+    }
+    if (grid1 != NULL)
+    {
+        delete[] grid1;
+    }
+
+    return (0);
 }
