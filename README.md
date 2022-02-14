@@ -2,7 +2,7 @@
 sandpiles in c/c++ 
 
 
-GOD its been a long time since I did anything in c/c++.
+This appears to be about twice as fast as the Go version. 
 
 ## timing
 
@@ -71,3 +71,24 @@ GOD its been a long time since I did anything in c/c++.
   - Time 0h 12m 31s
   - 303:697 303:697
   - 394 394
+
+- 2^19
+  - 524288 grains placed
+  - Time 1h 63m?????? 49s
+  - 225:775 225:775
+  - 550 550
+
+I dont trust the times now.
+
+![8](images/8.png)
+![9](images/9.png)
+![10](images/10.png)
+![11](images/11.png)
+![12](images/12.png)
+![13](images/13.png)
+![14](images/14.png)
+![15](images/15.png)
+![16](images/16.png)
+![17](images/17.png)
+![18](images/18.png)
+![19](images/19.png)
