@@ -17,6 +17,8 @@ int grid_X;
 int grid_Y;
 int grid_size;
 
+int shift;
+
 uint8_t *grid1;
 uint8_t *grid2;
 
@@ -30,12 +32,18 @@ void PrintPPM()
 
     int width = bMaxX - bMinX;
     int height = bMaxY - bMinY;
-
+    std::cerr << "shift" << std::endl;
     std::cerr << "  - " << bMinX << ":" << bMaxX << " " << bMinY << ":" << bMaxY << std::endl;
     std::cerr << "  - " << width << " " << height << std::endl;
-    std::cout << "P6" << std::endl;
-    std::cout << width << " " << height << " "
-              << "255" << std::endl;
+
+    std::ofstream outfile;
+    char filename[256];
+
+    sprintf(filename, "images/%i-center.ppm", shift);
+    outfile.open(filename);
+    outfile << "P6" << std::endl;
+    outfile << width << " " << height << " "
+            << "255" << std::endl;
 
     for (int y = bMinY; y < bMaxY; y++)
     {
@@ -46,24 +54,25 @@ void PrintPPM()
             switch (num)
             {
             case 0:
-                std::cout << uint8_t(0x4) << uint8_t(0x3a) << uint8_t(0x6f);
+                outfile << uint8_t(0x4) << uint8_t(0x3a) << uint8_t(0x6f);
                 break;
             case 1:
-                std::cout << uint8_t(0xf) << uint8_t(0x72) << uint8_t(0x84);
+                outfile << uint8_t(0xf) << uint8_t(0x72) << uint8_t(0x84);
                 break;
             case 2:
-                std::cout << uint8_t(0xaa) << uint8_t(0x88) << uint8_t(0x39);
+                outfile << uint8_t(0xaa) << uint8_t(0x88) << uint8_t(0x39);
                 break;
             case 3:
-                std::cout << uint8_t(0x9c) << uint8_t(0x00) << uint8_t(0x3c);
+                outfile << uint8_t(0x9c) << uint8_t(0x00) << uint8_t(0x3c);
                 break;
             default:
-                std::cout << uint8_t(255) << uint8_t(255) << uint8_t(255);
+                outfile << uint8_t(255) << uint8_t(255) << uint8_t(255);
             }
         }
         // std::cout << (int)grid1[index] << " ";
     }
     // std::cout << std::endl;
+    outfile.close();
 }
 // std::cout << std::endl;
 
@@ -199,11 +208,11 @@ int main(int argc, char **argv)
     time_t start;
     time_t end;
 
-    int shift = atoi(argv[1]);
+    shift = atoi(argv[1]);
     grains = 1 << shift;
 
-    grid_X = 1000;
-    grid_Y = 1000;
+    grid_X = 4000;
+    grid_Y = 4000;
     grid_size = grid_X * grid_Y;
 
     grid1 = new uint8_t[grid_size];
@@ -291,12 +300,14 @@ int main(int argc, char **argv)
               << "  - " << st << " grains placed" << std::endl;
     end = time(NULL);
 
-    int seconds, hours, minutes;
-    seconds = (end - start);
-    minutes = seconds / 60;
-    hours = minutes / 60;
-
-    std::cerr << "  - Time " << hours << "h " << minutes << "m " << seconds % 60 << "s" << std::endl;
+    /*
+        int seconds, hours, minutes;
+        seconds = (end - start);
+        minutes = seconds / 60;
+        hours = minutes / 60;
+    */
+    // std::cerr << "  - Time " << hours << "h " << minutes << "m " << seconds % 60 << "s" << std::endl;
+    std::cerr << "  - Time " << (end - start) << std::endl;
     // PrintGrid();
     PrintPPM();
 
