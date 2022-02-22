@@ -1,11 +1,10 @@
 #include <iostream>
 #include <fstream>
-#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <algorithm> // std::copy
 #include <string.h>
+#include <time.h>
 
 // globals
 int bMinX;
@@ -20,7 +19,6 @@ int grid_size;
 int shift;
 
 uint8_t *grid1;
-uint8_t *grid2;
 
 void PrintPPM()
 {
@@ -32,9 +30,9 @@ void PrintPPM()
 
     int width = bMaxX - bMinX;
     int height = bMaxY - bMinY;
-    std::cerr << "shift" << std::endl;
-    std::cerr << "  - " << bMinX << ":" << bMaxX << " " << bMinY << ":" << bMaxY << std::endl;
-    std::cerr << "  - " << width << " " << height << std::endl;
+    ;
+    std::cerr << "- " << bMinX << ":" << bMaxX << " " << bMinY << ":" << bMaxY << std::endl;
+    std::cerr << "- " << width << " " << height << std::endl;
 
     std::ofstream outfile;
     char filename[256];
@@ -69,137 +67,86 @@ void PrintPPM()
                 outfile << uint8_t(255) << uint8_t(255) << uint8_t(255);
             }
         }
-        // std::cout << (int)grid1[index] << " ";
     }
-    // std::cout << std::endl;
     outfile.close();
 }
-// std::cout << std::endl;
 
-void PrintGrid()
+
+
+
+void topple(void)
 {
-    for (int y = bMinY; y <= bMaxY; y++)
+
+    bool bail;
+    bail = false;
+    while (!bail)
     {
-        for (int x = bMinX; x <= bMaxX; x++)
+        int wMinX = bMinX;
+        int wMaxX = bMaxX;
+        int wMinY = bMinY;
+        int wMaxY = bMaxY;
+
+        bail = true;
+
+        for (int y = wMinY; y <= wMaxY; y++)
         {
-            int index = y * grid_X + x;
-            std::cout << (int)grid1[index] << " ";
+            for (int x = wMinX; x <= wMaxX; x++)
+            {
+                int index = y * grid_X + x;
+                if (grid1[index] >= 4)
+                {
+                    bail = false;
+
+                    grid1[index] -= 4;
+
+                    int tyn = y - 1;
+                    if (tyn >= 0)
+                    {
+                        int t_index = tyn * grid_X + x;
+                        grid1[t_index]++;
+                        if (tyn < bMinY)
+                        {
+                            bMinY = tyn;
+                        }
+                    }
+                    int tys = y + 1;
+                    if (tys <= grid_Y - 1)
+                    {
+                        int t_index = tys * grid_X + x;
+                        grid1[t_index]++;
+                        if (tys > bMaxY)
+                        {
+                            bMaxY = tys;
+                        }
+                    }
+
+                    int txw = x - 1;
+                    if (txw >= 0)
+                    {
+                        int t_index = y * grid_X + txw;
+                        grid1[t_index]++;
+                        if (txw < bMinX)
+                        {
+                            bMinX = txw;
+                        }
+                    }
+                    int txe = x + 1;
+                    if (txe <= grid_X - 1)
+                    {
+                        int t_index = y * grid_X + txe;
+                        grid1[t_index]++;
+                        if (txe > bMaxX)
+                        {
+                            bMaxX = txe;
+                        }
+                    }
+                }
+            }
         }
-        std::cout << std::endl;
     }
-    std::cout << std::endl;
 }
 
-bool topple(void)
-{
-    bool bail = true;
-    // anything less than 4 just get copied over
-    for (int y = bMinY; y <= bMaxY; y++)
-    {
-        for (int x = bMinX; x <= bMaxX; x++)
-        {
-            int index = y * grid_X + x;
-            uint8_t num = grid1[index];
-            if (num < 4)
-            {
-                grid2[index] = num;
-            }
-            else
-            {
-                grid2[index] = 0;
-            }
-        }
-    }
 
-    int wMinX = bMinX;
-    int wMaxX = bMaxX;
-    int wMinY = bMinY;
-    int wMaxY = bMaxY;
-
-    for (int y = wMinY; y <= wMaxY; y++)
-    {
-        for (int x = wMinX; x <= wMaxX; x++)
-        {
-            int index = y * grid_X + x;
-            uint8_t num = grid1[index];
-            if (num < 4)
-            {
-                continue;
-            }
-
-            grid2[index] += (num - 4);
-            bail = false;
-
-            // north
-            int ty = y - 1;
-            if (ty < 0)
-            {
-                bMinY = 0;
-            }
-            else
-            {
-                if (ty < bMinY)
-                {
-                    bMinY = ty;
-                }
-                grid2[ty * grid_X + x] += 1;
-            }
-
-            // south
-            ty = y + 1;
-            if (ty >= grid_Y)
-            {
-                bMinY = grid_Y - 1;
-            }
-            else
-            {
-                if (ty > bMaxY)
-                {
-                    bMaxY = ty;
-                }
-                grid2[ty * grid_X + x] += 1;
-            }
-
-            // west
-            int tx = x - 1;
-            if (tx < 0)
-            {
-                bMinX = 0;
-            }
-            else
-            {
-                if (tx < bMinX)
-                {
-                    bMinX = tx;
-                }
-                grid2[y * grid_X + tx] += 1;
-            }
-
-            // east
-            tx = x + 1;
-            if (tx >= grid_X)
-            {
-                bMaxX = grid_X - 1;
-            }
-            else
-            {
-                if (tx > bMaxX)
-                {
-                    bMaxX = tx;
-                }
-                grid2[y * grid_X + tx] += 1;
-            }
-        }
-    }
-    /*
-     for (int i = 0; i < grid_size; i++)
-     {
-         grid1[i] = grid2[i];
-     }
-     */
-    memcpy(grid1, grid2, sizeof(uint8_t) * grid_size);
-    return bail;
-}
 
 int main(int argc, char **argv)
 {
@@ -216,7 +163,12 @@ int main(int argc, char **argv)
     grid_size = grid_X * grid_Y;
 
     grid1 = new uint8_t[grid_size];
-    grid2 = new uint8_t[grid_size];
+
+
+    for (int i = 0; i < grid_size; i++)
+    {
+        grid1[i] = 0;
+    }
 
     bMinX = grid_X;
     bMaxX = 0;
@@ -229,8 +181,7 @@ int main(int argc, char **argv)
 
     grid1[pos1] = 128;
 
-    start = time(NULL);
-
+    // find area of grid with starting grains
     for (int y = 0; y < grid_Y; y++)
     {
         for (int x = 0; x < grid_X; x++)
@@ -264,57 +215,40 @@ int main(int argc, char **argv)
     bMinX--;
     bMinY--;
 
-    // std::cout << bMinX << ":" << bMaxX << " " << bMinY << ":" << bMaxY << std::endl;
+    start = time(NULL);
 
-    // for (uint64_t outerloop = 128; outerloop < grains; outerloop += 128)
+    int grains_put = 128;
+
     while (1)
     {
+        grains -= grains_put;
+        topple();
 
-        while (1)
+        if (grains > 0 && grains >= 128)
         {
-            bool t;
-            t = topple();
-            if (t == true)
-            {
-                break;
-            }
-            // std::cout << bMinX << ":" << bMaxX << " " << bMinY << ":" << bMaxY << std::endl;
+            grains_put = 128;
+            grid1[pos1] += grains_put;
         }
-        grains -= 128;
-        if (grains <= 0)
+        else if (grains > 0 && grains < 128)
+        {
+            grains_put = grains;
+            grid1[pos1] += grains_put;
+        }
+        else
         {
             break;
         }
-        grid1[pos1] += 128;
-        /*
-                if (outerloop < grains)
-                {
-                    grid1[pos1] += 128;
-                }
-        */
-        // PrintGrid();
     }
 
     int st = 1 << shift;
-    std::cerr << "- 2^" << shift << std::endl
-              << "  - " << st << " grains placed" << std::endl;
+    std::cerr << "2^" << shift << std::endl
+              << "- " << st << " grains placed" << std::endl;
     end = time(NULL);
 
-    /*
-        int seconds, hours, minutes;
-        seconds = (end - start);
-        minutes = seconds / 60;
-        hours = minutes / 60;
-    */
-    // std::cerr << "  - Time " << hours << "h " << minutes << "m " << seconds % 60 << "s" << std::endl;
-    std::cerr << "  - Time " << (end - start) << std::endl;
-    // PrintGrid();
+   std::cerr << "- Time " << (end - start) << std::endl;
+    
     PrintPPM();
 
-    if (grid2 != NULL)
-    {
-        delete[] grid2;
-    }
     if (grid1 != NULL)
     {
         delete[] grid1;
