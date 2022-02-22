@@ -84,3 +84,19 @@ sandpiles in c/c++
 - 1617:2383 1617:2383
 - 766 766
 
+
+
+
+![8](images/8-center.png)
+![9](images/9-center.png)
+![10](images/10-center.png)
+![11](images/11-center.png)
+![12](images/12-center.png)
+![13](images/13-center.png)
+![14](images/14-center.png)
+![15](images/15-center.png)
+![16](images/16-center.png)
+![17](images/17-center.png)
+![18](images/18-center.png)
+![19](images/19-center.png)
+![20](images/20-center.png)
