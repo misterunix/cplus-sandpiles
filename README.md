@@ -84,7 +84,7 @@ sandpiles in c/c++
 - 1617:2383 1617:2383
 - 766 766
 
-
+---
 
 
 ![8](images/8-center.png)

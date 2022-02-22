@@ -7,10 +7,10 @@
 #include <time.h>
 
 // globals
-int bMinX;
-int bMinY;
-int bMaxX;
-int bMaxY;
+int bMinX; // bMinX : The bounding box in lower the X plane.
+int bMinY; // bMinY : The bounding box in lower the Y plane.
+int bMaxX; // bMaxX : The bounding box in the upper X plane.
+int bMaxY; // bMaxY : The bounding box in the upper Y plane.
 
 int grid_X;
 int grid_Y;
@@ -155,25 +155,29 @@ int main(int argc, char **argv)
     time_t start;
     time_t end;
 
-    shift = atoi(argv[1]);
-    grains = 1 << shift;
+    shift = atoi(argv[1]); // shift : The shift amount to calculate the grains.
+        
+    grains = 1 << shift; // grains : Total number of grains to place on the grid.
 
-    grid_X = 4000;
-    grid_Y = 4000;
-    grid_size = grid_X * grid_Y;
+    grid_X = 4000; // grid_X : Maximum size of the grid/image in the X
+    grid_Y = 4000; // grid_Y : Maximum size of the grid/image in the Y
+    grid_size = grid_X * grid_Y; // grid_size : total number of units for the grid array.
 
+    // grid1 : Array where the grains are stored. Changed to uint8_t for speed
+    // reasons - and memory.
     grid1 = new uint8_t[grid_size];
 
-
+    // Init the grid array to all 0s
     for (int i = 0; i < grid_size; i++)
     {
         grid1[i] = 0;
     }
 
-    bMinX = grid_X;
-    bMaxX = 0;
-    bMinY = grid_Y;
-    bMaxY = 0;
+    
+    bMinX = grid_X; // Make the min high enough so the true lower bound can be found.
+    bMaxX = 0; // Make the max low enough so that true upper bound can be found.
+    bMinY = grid_Y; // make the min high enough so the true lower bound can be found.
+    bMaxY = 0; // bMaxY : The bounding box in the upper Y plane.
 
     int ip1x = grid_X / 2;
     int ip1y = grid_Y / 2;
