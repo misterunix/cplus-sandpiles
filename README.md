@@ -6,6 +6,41 @@ This appears to be about twice as fast as the Go version.
 
 ## timing
 
+**Crap windows laptop**
+
+2^11
+- 2048 grains placed
+- Time 8
+- 1973:2027 1973:2027
+- 54 54
+
+2^12
+- 4096 grains placed
+- Time 21
+- 1966:2034 1966:2034
+- 68 68
+
+2^13
+- 8192 grains placed
+- Time 59
+- 1957:2043 1957:2043
+- 86 86
+
+2^14
+- 16384 grains placed
+- Time 211
+- 1943:2057 1943:2057
+- 114 114
+
+2^15
+- 32768 grains placed
+- Time 551
+- 1923:2077 1923:2077
+- 154 154
+
+
+### another
+
 - 2^8
   - 256 grains placed
   - Time 0h 0m 0s

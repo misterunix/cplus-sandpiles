@@ -45,3 +45,8 @@ cplus-sandpiles
 *.txt
 *.nope
 !images/*.png
+
+
+*.json
+*.ilk
+*.pdb
