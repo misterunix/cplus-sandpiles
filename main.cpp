@@ -159,8 +159,8 @@ int main(int argc, char **argv)
         
     grains = 1 << shift; // grains : Total number of grains to place on the grid.
 
-    grid_X = 4000; // grid_X : Maximum size of the grid/image in the X
-    grid_Y = 4000; // grid_Y : Maximum size of the grid/image in the Y
+    grid_X = 12000; // grid_X : Maximum size of the grid/image in the X
+    grid_Y = 12000; // grid_Y : Maximum size of the grid/image in the Y
     grid_size = grid_X * grid_Y; // grid_size : total number of units for the grid array.
 
     // grid1 : Array where the grains are stored. Changed to uint8_t for speed
