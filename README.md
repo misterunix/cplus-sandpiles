@@ -107,3 +107,4 @@ New machine
 ![18](images/18-center.png)
 ![19](images/19-center.png)
 ![20](images/20-center.png)
+![21](images/21-center.png)
