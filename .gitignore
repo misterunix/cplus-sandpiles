@@ -40,7 +40,7 @@ cplus-sandpiles
 *.jpeg
 *.pbm
 *.pnm
-images/*.ppm
+!images/*.ppm
 
 *.txt
 *.nope

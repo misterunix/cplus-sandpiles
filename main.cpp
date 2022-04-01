@@ -75,7 +75,7 @@ void PrintPPM()
   outfile.close();
 }
 
-void topple(void)
+inline void topple(void)
 {
 
   bool bail;
