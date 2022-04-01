@@ -156,12 +156,18 @@ int main(int argc, char **argv)
     time_t end;
 
     shift = atoi(argv[1]); // shift : The shift amount to calculate the grains.
-        
+    
     grains = 1 << shift; // grains : Total number of grains to place on the grid.
 
     grid_X = 12000; // grid_X : Maximum size of the grid/image in the X
     grid_Y = 12000; // grid_Y : Maximum size of the grid/image in the Y
     grid_size = grid_X * grid_Y; // grid_size : total number of units for the grid array.
+
+  std::cout << "shift: " << shift << std::endl;
+  std::cout << "grains: " << grains << std::endl;
+  std::cout << "grid_X: " << grid_X << std::endl;
+  std::cout << "grid_Y: " << grid_Y << std::endl;
+  std::cout << "grid_size: " << grid_size << std::endl;
 
     // grid1 : Array where the grains are stored. Changed to uint8_t for speed
     // reasons - and memory.
