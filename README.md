@@ -1,96 +1,38 @@
 # cplus-sandpiles
-sandpiles in c/c++ 
 
-I made changes while messing around on my windows laptop. Its old and a POS. Yet I was surprised on how fast it ran the test code. I decided to switch to 16 bit grid size so more grains could be placed at a time in the center. It made a huge difference. I knew it would be faster but was floored at how much faster.
+I learned about a type of cellular automata called **sandpiles**. 
 
-## new code - big dell laptop - 75% load
+My first pass was to use my main language of Go but the performance was not what I wanted it to be. I ported it to c/c++ and got better performance but I knew it could be better but I put it on the back burner so I could concentrate on my other projects that make money. 
 
-**2^8**
-- 256 grains placed
-- Time 0
-- 1984:2016 1984:2016
-- 32 32
+So here I am back to see what I can do.
 
-**2^9**
-- 512 grains placed
-- Time 0
-- 1981:2019 1981:2019
-- 38 38
+Basic changes:
+    redefined `uint8_t` to `gsize`
+    redefined `128` constant to `pilehalf`
 
-**2^10**
-- 1024 grains placed
-- Time 0
-- 1978:2022 1978:2022
-- 44 44
+This allows the code to be altered much easier. 
 
-**2^11**
-- 2048 grains placed
-- Time 0
-- 1973:2027 1973:2027
-- 54 54
+Switching from 8b to 16b allows more grains to be placed each round and that made it SO much faster.
 
-**2^12**
-- 4096 grains placed
-- Time 0
-- 1966:2034 1966:2034
-- 68 68
+I need to do some serious documentation, but have fun with it anyway. If you get larger images before I do, please do a pull request with the image so it can be included. I would like to see what piles above 1<<32 will look like.
 
-**2^13**
-- 8192 grains placed
-- Time 0
-- 1957:2043 1957:2043
-- 86 86
+Also, with a bit of code change, there can be multiple starting locations. It makes for some really interesting images.
 
-**2^14**
-- 16384 grains placed
-- Time 1
-- 1943:2057 1943:2057
-- 114 114
-
-**2^15**
-- 32768 grains placed
-- Time 1
-- 1923:2077 1923:2077
-- 154 154
-
-**2^16**
-- 65536 grains placed
-- Time 10
-- 1896:2104 1896:2104
-- 208 208
-
-**2^17**
-- 131072 grains placed
-- Time 47
-- 1857:2143 1857:2143
-- 286 286
-
-**2^18**
-- 262144 grains placed
-- Time 207
-- 1803:2197 1803:2197
-- 394 394
-
-**2^19**
-- 524288 grains placed
-- Time 998
-- 1725:2275 1725:2275
-- 550 550
-
-**2^20**
-- 1048576 grains placed
-- Time 5083
-- 1617:2383 1617:2383
-- 766 766
-
-New machine
-**2^21**
+I do not know what the bounds of the images will turn out to be so watch the output:
+shift: 21  
+grains: 2097152  
+grid_X: 12000  
+grid_Y: 12000  
+grid_size: 144000000  
+2^21
 - 2097152 grains placed
-- Time 39737
-- 1464:2536 1464:2536
+- Time 2086
+- 5464:6536 5464:6536
 - 1072 1072
 
----
+This image is 1072x1072 and the max at this time is 12000x12000. This value might need to be changed, but it will increase the amount of memory needed.
+
+
 
 
 ![8](images/8-center.png)
