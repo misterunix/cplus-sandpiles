@@ -1,8 +1,7 @@
 # cplus-sandpiles
 sandpiles in c/c++ 
 
-
-
+I made changes while messing around on my windows laptop. Its old and a POS. Yet I was surprised on how fast it ran the test code. I decided to switch to 16 bit grid size so more grains could be placed at a time in the center. It made a huge difference. I knew it would be faster but was floored at how much faster.
 
 ## new code - big dell laptop - 75% load
 
