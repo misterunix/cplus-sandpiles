@@ -2,6 +2,11 @@
 
 My good old POS windows laptop.
 
+
+Processor	AMD A10-7300 Radeon R6, 10 Compute Cores 4C+6G    1.90 GHz  
+Installed RAM	6.00 GB (4.95 GB usable)   
+System type	64-bit operating system, x64-based processor  
+ 
 `g++ -O2 -Wall main.cpp -o sandpile.exe`
 
 Study example for code changes.
