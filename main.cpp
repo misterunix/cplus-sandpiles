@@ -6,8 +6,8 @@
 #include <string.h>
 #include <time.h>
 
-#define gsize uint16_t
-#define pilehalf 32768
+#define gsize uint32_t // fall back is uint16_t
+#define pilehalf 2147483648 // fall back is 32768
 
 // globals
 int bMinX; // bMinX : The bounding box in lower the X plane.
