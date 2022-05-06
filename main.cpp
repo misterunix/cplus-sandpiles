@@ -6,8 +6,8 @@
 #include <string.h>
 #include <time.h>
 
-#define gsize uint32_t // fall back is uint16_t
-#define pilehalf 2147483648 // fall back is 32768
+#define gsize uint16_t //uint32_t // fall back is uint16_t
+#define pilehalf 32768 //2147483648 // fall back is 32768
 
 // globals
 int bMinX; // bMinX : The bounding box in lower the X plane.
@@ -231,7 +231,8 @@ int main(int argc, char **argv)
   {
     grains -= grains_put;
     topple();
-
+    double ratio = (double)grains / (double)pilehalf;
+    std::cerr << "grains: " << grains << " pilehalf: " << pilehalf << " ratio: " << ratio << std::endl;
     if (grains > 0 && grains >= pilehalf)
     {
       grains_put = pilehalf;
