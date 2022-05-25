@@ -7,16 +7,28 @@ My first pass was to use my main language of Go but the performance was not what
 So here I am back to see what I can do.
 
 Basic changes:
-    redefined `uint8_t` to `gsize`
-    redefined `128` constant to `pilehalf`
 
+```
+#define gsize uint32_t // fall back is uint16_t
+#define pilehalf 2147483648 // fall back is 32768
+```
+    
 This allows the code to be altered much easier. 
 
-Switching from 8b to 16b allows more grains to be placed each round and that made it SO much faster.
+Had to place bounds on grains and piehalf.  
+Works much faster now.
+
+Switching from 8b to 16b to 32b allows more grains to be placed each round and that made it SO much faster.
 
 I need to do some serious documentation, but have fun with it anyway. If you get larger images before I do, please do a pull request with the image so it can be included. I would like to see what piles above 1<<32 will look like.
 
 Also, with a bit of code change, there can be multiple starting locations. It makes for some really interesting images.
+
+Memory usage at 1<<20  
+`568392 565604 2992`
+
+Memory usage at 1<<21  
+`568392 565700 3088`
 
 I do not know what the bounds of the images will turn out to be so watch the output:
 shift: 21  

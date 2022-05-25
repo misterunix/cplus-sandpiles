@@ -6,8 +6,8 @@
 #include <string.h>
 #include <time.h>
 
-#define gsize uint16_t //uint32_t // fall back is uint16_t
-#define pilehalf 32768 //2147483648 // fall back is 32768
+#define gsize uint32_t // fall back is uint16_t
+#define pilehalf 2147483648 // fall back is 32768
 
 // globals
 int bMinX; // bMinX : The bounding box in lower the X plane.
@@ -178,6 +178,8 @@ int main(int argc, char **argv)
     grid1[i] = 0;
   }
 
+  std::cout << "Grid Initialized" << std::endl;
+
   bMinX = grid_X; // Make the min high enough so the true lower bound can be found.
   bMaxX = 0;      // Make the max low enough so that true upper bound can be found.
   bMinY = grid_Y; // make the min high enough so the true lower bound can be found.
@@ -187,8 +189,15 @@ int main(int argc, char **argv)
   int ip1y = grid_Y / 2;
   int pos1 = ip1y * grid_X + ip1x;
 
-  grid1[pos1] = pilehalf;
+  std::cout << "ip1x: " << ip1x << std::endl;
+  std::cout << "ip1y: " << ip1y << std::endl;
+  std::cout << "pos1: " << pos1 << std::endl;
 
+  if( grains < pilehalf)
+    grid1[pos1] = grains;
+  else
+    grid1[pos1] = pilehalf;
+  
   // find area of grid with starting grains
   for (int y = 0; y < grid_Y; y++)
   {
@@ -226,6 +235,8 @@ int main(int argc, char **argv)
   start = time(NULL);
 
   int grains_put = pilehalf;
+  if(grains < pilehalf)
+    grains_put = grains;
 
   while (1)
   {
